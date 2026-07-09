@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AlgoTracker Pro - Advanced Algorithm Mastery Dashboard</title>
+  <link rel="stylesheet" href="styles.css" />
+  <script>
+    // Applied before first paint to avoid a flash of the wrong theme.
+    (function () {
+      try {
+        var stored = localStorage.getItem("algoTrackerTheme");
+        var theme = stored === "light" || stored === "dark"
+          ? stored
+          : (window.matchMedia && window.matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark");
+        document.documentElement.setAttribute("data-theme", theme);
+      } catch (e) {
+        document.documentElement.setAttribute("data-theme", "dark");
+      }
+    })();
+  </script>
+</head>
+<body>
+  <!-- ANIMATED BACKGROUND -->
+  <div class="background-animated">
+    <div class="gradient-orb gradient-1"></div>
+    <div class="gradient-orb gradient-2"></div>
+    <div class="gradient-orb gradient-3"></div>
+  </div>
+
+  <div class="dashboard-container">
+    <!-- LEFT SIDEBAR -->
+    <aside class="sidebar">
+      <!-- HEADER WITH THEME TOGGLE -->
+      <div class="sidebar-header">
+        <div class="logo-section">
+          <div class="logo-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <path d="M12 2L2 7v10c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V7l-10-5z" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <h1 class="dashboard-title">AlgoTracker<span class="accent-text">Pro</span></h1>
+        </div>
+        <button class="btn-theme-toggle" id="theme-toggle" aria-label="Toggle theme">
+          <span class="theme-icon">🌙</span>
+        </button>
+      </div>
+
+      <!-- QUICK STATS -->
+      <section class="quick-stats">
+        <div class="stat-mini">
+          <span class="stat-mini-value" id="streak-count">0</span>
+          <span class="stat-mini-label">Day Streak</span>
+        </div>
+        <div class="stat-mini">
+          <span class="stat-mini-value" id="session-count">0</span>
+          <span class="stat-mini-label">Sessions</span>
+        </div>
+        <div class="stat-mini">
+          <span class="stat-mini-value" id="focus-hours">0h</span>
+          <span class="stat-mini-label">Focus Time</span>
+        </div>
+      </section>
+
+      <!-- ANALYTICS SECTION -->
+      <section class="analytics-section">
+        <h2 class="section-title">Progress Metrics</h2>
+        
+        <div class="analytics-card">
+          <div class="stat-row">
+            <span class="stat-label">Total Tasks</span>
+            <span class="stat-value" id="total-tasks">0</span>
+          </div>
+          <div class="stat-row">
+            <span class="stat-label">Completed</span>
+            <span class="stat-value accent" id="mastered-tasks">0</span>
+          </div>
+          <div class="stat-row">
+            <span class="stat-label">In Progress</span>
+            <span class="stat-value secondary" id="progress-tasks">0</span>
+          </div>
+        </div>
+
+        <!-- CIRCULAR PROGRESS CHART -->
+        <div class="chart-container">
+          <svg class="progress-circle" viewBox="0 0 100 100">
+            <circle cx="50" cy="50" r="45" class="progress-bg"/>
+            <circle cx="50" cy="50" r="45" class="progress-fill" id="chart-circle"/>
+          </svg>
+          <div class="chart-text">
+            <span class="chart-percent" id="progress-percent">0%</span>
+            <span class="chart-label">Mastered</span>
+          </div>
+        </div>
+
+        <!-- LINEAR PROGRESS BAR -->
+        <div class="progress-container">
+          <div class="progress-bar-wrapper">
+            <div class="progress-bar" id="progress-bar"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- POMODORO TIMER SECTION -->
+      <section class="timer-section">
+        <h2 class="section-title">Focus Session</h2>
+        
+        <div class="timer-container">
+          <svg class="timer-circle" viewBox="0 0 120 120">
+            <circle class="timer-circle-bg" cx="60" cy="60" r="54"></circle>
+            <circle class="timer-circle-progress" cx="60" cy="60" r="54"></circle>
+          </svg>
+          <div class="timer-display">
+            <span class="timer-time" id="timer-display">25:00</span>
+            <span class="timer-label">minutes</span>
+          </div>
+        </div>
+
+        <!-- TIMER DURATION SELECTOR -->
+        <div class="timer-presets">
+          <button class="preset-btn" data-duration="15">15m</button>
+          <button class="preset-btn active" data-duration="25">25m</button>
+          <button class="preset-btn" data-duration="45">45m</button>
+        </div>
+
+        <div class="timer-controls">
+          <button class="btn btn-timer" id="btn-start" aria-label="Start timer">
+            <span class="btn-icon">▶</span>
+          </button>
+          <button class="btn btn-timer" id="btn-pause" aria-label="Pause timer" disabled>
+            <span class="btn-icon">⏸</span>
+          </button>
+          <button class="btn btn-timer-secondary" id="btn-reset" aria-label="Reset timer">
+            <span class="btn-icon">↻</span>
+          </button>
+        </div>
+
+        <div class="session-stats">
+          <span class="session-stat">
+            <span class="label">Sessions Today:</span>
+            <span class="value" id="sessions-today">0</span>
+          </span>
+          <span class="session-stat">
+            <span class="label">Focus Time:</span>
+            <span class="value" id="focus-time-today">0m</span>
+          </span>
+        </div>
+      </section>
+
+      <!-- KEYBOARD SHORTCUTS -->
+      <section class="shortcuts-section">
+        <h2 class="section-title">Shortcuts</h2>
+        <div class="shortcuts-list">
+          <div class="shortcut">
+            <kbd>Ctrl</kbd><span>+</span><kbd>K</kbd> <span class="hint">Search</span>
+          </div>
+          <div class="shortcut">
+            <kbd>Ctrl</kbd><span>+</span><kbd>N</kbd> <span class="hint">New Task</span>
+          </div>
+          <div class="shortcut">
+            <kbd>Space</kbd> <span class="hint">Toggle Timer</span>
+          </div>
+        </div>
+      </section>
+    </aside>
+
+    <!-- MAIN CONTENT AREA -->
+    <main class="main-content">
+      <!-- TOP BAR WITH CONTROLS -->
+      <div class="top-bar">
+        <div class="top-bar-left">
+          <h2 class="board-title">Algorithm Topics</h2>
+          <p class="board-subtitle">Organize, track, and master your coding journey</p>
+        </div>
+        <div class="top-bar-right">
+          <button class="btn btn-search" id="btn-search" aria-label="Search tasks">
+            <span>🔍</span>
+          </button>
+          <button class="btn btn-filter" id="btn-filter" aria-label="Filter tasks">
+            <span>⚙️</span>
+          </button>
+          <button class="btn btn-stats" id="btn-stats" aria-label="View statistics">
+            <span>📊</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- SEARCH BAR (HIDDEN BY DEFAULT) -->
+      <div class="search-bar hidden" id="search-bar">
+        <input type="text" id="search-input" placeholder="Search algorithms..." aria-label="Search" />
+        <button class="btn-close-search" aria-label="Close search">✕</button>
+      </div>
+
+      <!-- DIFFICULTY FILTER -->
+      <div class="filter-bar hidden" id="filter-bar">
+        <div class="filter-group">
+          <span class="filter-label">Difficulty:</span>
+          <button class="filter-btn active" data-filter="all">All</button>
+          <button class="filter-btn" data-filter="easy">Easy</button>
+          <button class="filter-btn" data-filter="medium">Medium</button>
+          <button class="filter-btn" data-filter="hard">Hard</button>
+        </div>
+        <div class="filter-group">
+          <span class="filter-label">Category:</span>
+          <select id="category-select" class="category-select">
+            <option value="">All Categories</option>
+            <option value="arrays">Arrays</option>
+            <option value="strings">Strings</option>
+            <option value="trees">Trees</option>
+            <option value="graphs">Graphs</option>
+            <option value="dp">Dynamic Programming</option>
+            <option value="sorting">Sorting</option>
+            <option value="searching">Searching</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- KANBAN BOARD -->
+      <div class="kanban-board">
+        <!-- TO DO COLUMN -->
+        <div class="kanban-column" data-status="todo">
+          <div class="column-header">
+            <h3 class="column-title">📋 To Do</h3>
+            <span class="column-count" id="count-todo">0</span>
+          </div>
+
+          <div class="add-task-container">
+            <input
+              type="text"
+              class="add-task-input"
+              id="new-task-input"
+              placeholder="Add algorithm..."
+              aria-label="Add new algorithm"
+            />
+            <button class="btn btn-add" id="btn-add-task" aria-label="Add task">
+              <span>+</span>
+            </button>
+          </div>
+
+          <div class="card-container" id="column-todo" data-status="todo">
+            <!-- Cards will be inserted here -->
+          </div>
+        </div>
+
+        <!-- IN PROGRESS COLUMN -->
+        <div class="kanban-column" data-status="inProgress">
+          <div class="column-header">
+            <h3 class="column-title">⚡ In Progress</h3>
+            <span class="column-count" id="count-inProgress">0</span>
+          </div>
+          <div class="card-container" id="column-inProgress" data-status="inProgress">
+            <!-- Cards will be inserted here -->
+          </div>
+        </div>
+
+        <!-- MASTERED COLUMN -->
+        <div class="kanban-column mastered-column" data-status="mastered">
+          <div class="column-header">
+            <h3 class="column-title">✨ Mastered</h3>
+            <span class="column-count" id="count-mastered">0</span>
+          </div>
+          <div class="card-container" id="column-mastered" data-status="mastered">
+            <!-- Cards will be inserted here -->
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- MODAL: TASK DETAILS -->
+  <div class="modal modal-task-details hidden" id="modal-task-details">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 id="modal-task-title">Task Details</h3>
+        <button class="btn-modal-close" aria-label="Close modal">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label>Title</label>
+          <input type="text" id="modal-title-input" placeholder="Task title" />
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Difficulty</label>
+            <select id="modal-difficulty-select">
+              <option value="easy">Easy</option>
+              <option value="medium" selected>Medium</option>
+              <option value="hard">Hard</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Priority</label>
+            <select id="modal-priority-select">
+              <option value="low">Low</option>
+              <option value="medium" selected>Medium</option>
+              <option value="high">High</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Category</label>
+          <select id="modal-category-select">
+            <option value="">Select Category</option>
+            <option value="arrays">Arrays</option>
+            <option value="strings">Strings</option>
+            <option value="trees">Trees</option>
+            <option value="graphs">Graphs</option>
+            <option value="dp">Dynamic Programming</option>
+            <option value="sorting">Sorting</option>
+            <option value="searching">Searching</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Description</label>
+          <textarea id="modal-description-input" placeholder="Add notes..." rows="3"></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" id="btn-modal-cancel">Cancel</button>
+        <button class="btn btn-primary" id="btn-modal-save">Save</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: STATISTICS -->
+  <div class="modal modal-stats hidden" id="modal-stats">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Session Statistics</h3>
+        <button class="btn-modal-close" aria-label="Close modal">✕</button>
+      </div>
+      <div class="modal-body stats-grid">
+        <div class="stat-card">
+          <div class="stat-card-value" id="stat-total-sessions">0</div>
+          <div class="stat-card-label">Total Sessions</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card-value" id="stat-total-hours">0</div>
+          <div class="stat-card-label">Total Focus Time</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card-value" id="stat-avg-duration">0m</div>
+          <div class="stat-card-label">Avg Session Length</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card-value" id="stat-longest-session">0m</div>
+          <div class="stat-card-label">Longest Session</div>
+        </div>
+      </div>
+      <div class="chart-section">
+        <h4 class="chart-title">Difficulty Distribution</h4>
+        <div class="difficulty-chart" id="difficulty-chart">
+          <!-- Chart bars will be generated -->
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-primary" id="btn-stats-close">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- CONFETTI ANIMATION -->
+  <div id="confetti-container"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>
