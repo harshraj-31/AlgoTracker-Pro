@@ -17,6 +17,7 @@
   /* Raw RGB channels for rgba() overlays (kept in sync with --color-surface / white) */
   --color-surface-rgb: 26, 24, 39;
   --color-overlay-rgb: 255, 255, 255;
+  --color-scrim-rgb: 15, 15, 30;
 
   /* Vibrant Accent Colors */
   --color-accent-purple: #d084ff;
@@ -26,6 +27,15 @@
   --color-accent-green: #4ade80;
   --color-accent-orange: #fb923c;
   --color-accent-red: #ff4757;
+
+  /* Text-safe variants: identical to accents in dark mode, darkened in light mode
+     for readable contrast (the base accents are tuned for glows/backgrounds, not text) */
+  --color-accent-purple-text: var(--color-accent-purple);
+  --color-accent-green-text: var(--color-accent-green);
+  --color-accent-blue-text: var(--color-accent-blue);
+  --color-accent-red-text: var(--color-accent-red);
+  --color-accent-orange-text: var(--color-accent-orange);
+  --color-accent-pink-text: var(--color-accent-pink);
 
   /* Gradient Accents */
   --gradient-purple-blue: linear-gradient(135deg, #d084ff 0%, #3b82f6 100%);
@@ -80,26 +90,47 @@
   --color-bg-secondary: #ffffff;
   --color-bg-tertiary: #eef0f6;
   --color-surface: #ffffff;
-  --color-border: #e1e3ee;
-  --color-border-light: #cdd0e0;
-  --color-text-primary: #16151f;
-  --color-text-secondary: #52566a;
-  --color-text-muted: #888ca0;
+  --color-border: #d8dae6;
+  --color-border-light: #c3c6d6;
+  --color-text-primary: #14131c;
+  --color-text-secondary: #4a4e5e;
+  --color-text-muted: #6b6f80;
 
   --color-surface-rgb: 255, 255, 255;
   --color-overlay-rgb: 20, 20, 35;
+
+  /* Darkened, higher-contrast versions of the accent colors for use as TEXT
+     on light backgrounds (the base accents stay pastel/vivid for glows,
+     borders, and fills, which don't need the same contrast ratio) */
+  --color-accent-purple-text: #9333ea;
+  --color-accent-green-text: #15803d;
+  --color-accent-blue-text: #1d4ed8;
+  --color-accent-red-text: #dc2626;
+  --color-accent-orange-text: #c2410c;
+  --color-accent-pink-text: #be185d;
 
   --shadow-sm: 0 2px 8px rgba(20, 20, 35, 0.06);
   --shadow-md: 0 8px 24px rgba(20, 20, 35, 0.08);
   --shadow-lg: 0 16px 48px rgba(20, 20, 35, 0.1);
   --shadow-xl: 0 24px 64px rgba(20, 20, 35, 0.12);
-  --shadow-glow-purple: 0 0 30px rgba(208, 132, 255, 0.2);
-  --shadow-glow-blue: 0 0 30px rgba(59, 130, 246, 0.2);
-  --shadow-glow-green: 0 0 30px rgba(74, 222, 128, 0.2);
+  --shadow-glow-purple: 0 0 30px rgba(147, 51, 234, 0.18);
+  --shadow-glow-blue: 0 0 30px rgba(29, 78, 216, 0.18);
+  --shadow-glow-green: 0 0 30px rgba(21, 128, 61, 0.18);
 }
 
 [data-theme="light"] .gradient-orb {
   opacity: 0.08;
+}
+
+/* Cards that rely on a translucent surface fill need a touch more opacity
+   in light mode, since a near-white fill over a near-white page barely
+   separates from the background otherwise. */
+[data-theme="light"] .stat-mini,
+[data-theme="light"] .analytics-card,
+[data-theme="light"] .task-card,
+[data-theme="light"] .kanban-column {
+  background-color: rgba(var(--color-surface-rgb), 0.9);
+  box-shadow: var(--shadow-sm);
 }
 
 /* ============================================================================
@@ -373,7 +404,7 @@ body {
   display: block;
   font-size: 1.5rem;
   font-weight: 700;
-  color: var(--color-accent-purple);
+  color: var(--color-accent-purple-text);
   font-family: var(--font-mono);
   margin-bottom: var(--space-xs);
 }
@@ -439,12 +470,12 @@ body {
 }
 
 .stat-value.accent {
-  color: var(--color-accent-green);
+  color: var(--color-accent-green-text);
   text-shadow: 0 0 12px rgba(74, 222, 128, 0.3);
 }
 
 .stat-value.secondary {
-  color: var(--color-accent-blue);
+  color: var(--color-accent-blue-text);
   text-shadow: 0 0 12px rgba(59, 130, 246, 0.3);
 }
 
@@ -584,7 +615,7 @@ body {
   font-size: 2rem;
   font-weight: 700;
   font-family: var(--font-mono);
-  color: var(--color-accent-purple);
+  color: var(--color-accent-purple-text);
   letter-spacing: 0.05em;
   text-shadow: 0 0 16px rgba(208, 132, 255, 0.4);
 }
@@ -617,7 +648,7 @@ body {
 
 .preset-btn:hover {
   border-color: var(--color-accent-purple);
-  color: var(--color-accent-purple);
+  color: var(--color-accent-purple-text);
 }
 
 .preset-btn.active {
@@ -668,7 +699,7 @@ body {
 .btn-timer-secondary {
   background: rgba(208, 132, 255, 0.1);
   border: 1px solid var(--color-accent-purple);
-  color: var(--color-accent-purple);
+  color: var(--color-accent-purple-text);
   padding: 0.75rem 1.25rem;
   border-radius: var(--radius-lg);
   cursor: pointer;
@@ -706,7 +737,7 @@ body {
 }
 
 .session-stat .value {
-  color: var(--color-accent-green);
+  color: var(--color-accent-green-text);
   font-family: var(--font-mono);
   font-weight: 600;
 }
@@ -745,7 +776,7 @@ body {
 
 .shortcut .hint {
   margin-left: auto;
-  color: var(--color-accent-purple);
+  color: var(--color-accent-purple-text);
   font-weight: 600;
 }
 
@@ -871,7 +902,7 @@ body {
 }
 
 .btn-close-search:hover {
-  color: var(--color-accent-purple);
+  color: var(--color-accent-purple-text);
 }
 
 /* FILTER BAR */
@@ -915,7 +946,7 @@ body {
 
 .filter-btn:hover {
   border-color: var(--color-accent-purple);
-  color: var(--color-accent-purple);
+  color: var(--color-accent-purple-text);
 }
 
 .filter-btn.active {
@@ -1022,7 +1053,7 @@ body {
   border-radius: var(--radius-md);
   font-size: 0.8rem;
   font-weight: 700;
-  color: var(--color-accent-purple);
+  color: var(--color-accent-purple-text);
   font-family: var(--font-mono);
 }
 
@@ -1171,13 +1202,13 @@ body {
 }
 
 .task-edit-btn:hover {
-  color: var(--color-accent-blue);
+  color: var(--color-accent-blue-text);
   background: rgba(59, 130, 246, 0.1);
   transform: scale(1.2);
 }
 
 .task-delete-btn:hover {
-  color: var(--color-accent-red);
+  color: var(--color-accent-red-text);
   background: rgba(255, 71, 87, 0.1);
   transform: scale(1.2);
 }
@@ -1197,32 +1228,32 @@ body {
   border-radius: var(--radius-sm);
   font-size: 0.7rem;
   font-weight: 600;
-  color: var(--color-accent-purple);
+  color: var(--color-accent-purple-text);
   font-family: var(--font-mono);
 }
 
 .task-badge.easy {
   background: rgba(74, 222, 128, 0.15);
   border-color: rgba(74, 222, 128, 0.3);
-  color: var(--color-accent-green);
+  color: var(--color-accent-green-text);
 }
 
 .task-badge.medium {
   background: rgba(251, 146, 60, 0.15);
   border-color: rgba(251, 146, 60, 0.3);
-  color: var(--color-accent-orange);
+  color: var(--color-accent-orange-text);
 }
 
 .task-badge.hard {
   background: rgba(255, 71, 87, 0.15);
   border-color: rgba(255, 71, 87, 0.3);
-  color: var(--color-accent-red);
+  color: var(--color-accent-red-text);
 }
 
 .task-badge.priority-high {
   background: rgba(255, 0, 110, 0.15);
   border-color: rgba(255, 0, 110, 0.3);
-  color: var(--color-accent-pink);
+  color: var(--color-accent-pink-text);
 }
 
 /* ============================================================================
@@ -1287,7 +1318,7 @@ body {
 }
 
 .btn-modal-close:hover {
-  color: var(--color-accent-purple);
+  color: var(--color-accent-purple-text);
   transform: scale(1.2);
 }
 
@@ -1356,7 +1387,7 @@ body {
 .stat-card-value {
   font-size: 1.75rem;
   font-weight: 700;
-  color: var(--color-accent-purple);
+  color: var(--color-accent-purple-text);
   font-family: var(--font-mono);
   margin-bottom: var(--space-sm);
 }
@@ -1483,7 +1514,7 @@ body {
 }
 
 .accent {
-  color: var(--color-accent-purple);
+  color: var(--color-accent-purple-text);
 }
 
 @media (max-width: 1400px) {
